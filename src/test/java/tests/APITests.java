@@ -14,7 +14,7 @@ public class APITests extends TestBase {
     static String userId;
     @Test
     @Order(1)
-    void checkCreateUser() {
+    void checkCreateUserTest() {
         userId = given().log().uri()
                 .log().method()
                 .log().body()
@@ -37,7 +37,7 @@ public class APITests extends TestBase {
 
     @Test
     @Order(2)
-    void checkUpdateUser() {
+    void checkUpdateUserTest() {
         given().log().uri()
                 .log().method()
                 .log().body()
@@ -57,7 +57,7 @@ public class APITests extends TestBase {
 
     @Test
     @Order(3)
-    void checkDeleteUser() {
+    void checkDeleteUserTest() {
         given().log().uri()
                 .log().method()
                 .when()
@@ -69,7 +69,7 @@ public class APITests extends TestBase {
 
     @Test
     @Order(4)
-    void checkGetUser() {
+    void checkGetUserTest() {
         given().log().uri()
                 .log().method()
                 .when()
@@ -83,7 +83,7 @@ public class APITests extends TestBase {
 
     @Test
     @Order(5)
-    void checkRegisterUser() {
+    void checkRegisterUserTest() {
         given().log().uri()
                 .log().method()
                 .log().body()
