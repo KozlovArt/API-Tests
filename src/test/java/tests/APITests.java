@@ -1,103 +1,124 @@
 package tests;
 
+import models.*;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
-import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static specs.ReqresSpec.requestWithBodySpec;
+import static specs.ReqresSpec.requestWithoutBodySpec;
+import static specs.ReqresSpec.responseWithBodySpec;
+import static specs.ReqresSpec.responseWithoutBodySpec;
+
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class APITests extends TestBase {
     static String userId;
     @Test
     @Order(1)
-    void checkCreateUser() {
-        userId = given().log().uri()
-                .log().method()
-                .log().body()
-                .body("{\n" +
-                        "    \"name\": \"Alex\",\n" +
-                        "    \"job\": \"freeloader\"\n" +
-                        "}")
-                .contentType(JSON)
+    void checkCreateUserTest() {
+        UserInfoRequestModel requestModel = new UserInfoRequestModel();
+        requestModel.setName("Alex");
+        requestModel.setJob("freeloader");
+        UserInfoResponseModel responseModel = step("Create user request", () -> given(requestWithBodySpec)
+                .body(requestModel)
                 .when()
                 .post("/users")
                 .then()
-                .log().status()
-                .log().body()
+                .spec(responseWithBodySpec)
                 .statusCode(201)
-                .body("name", is("Alex"),
-                        "job", is("freeloader"))
-                .extract()
-                .path("id");
+                .extract().as(UserInfoResponseModel.class));
+        step("Verify response", () -> {
+        assertEquals("Alex", responseModel.getName());
+        assertEquals("freeloader", responseModel.getJob());
+            userId = responseModel.getId();
+        });
+
     }
 
     @Test
     @Order(2)
-    void checkUpdateUser() {
-        given().log().uri()
-                .log().method()
-                .log().body()
-                .body("{\n" +
-                        "    \"name\": \"Alex\",\n" +
-                        "    \"job\": \"hard worker\"\n" +
-                        "}")
-                .contentType(JSON)
+    void checkUpdateUserTest() {
+        UserInfoRequestModel requestModel = new UserInfoRequestModel();
+        requestModel.setName("Alex");
+        requestModel.setJob("hard worker");
+        UserInfoResponseModel responseModel = step("Update user request", () -> given(requestWithBodySpec).log().uri()
+                .body(requestModel)
                 .when()
                 .put("/users/" + userId)
                 .then()
-                .log().status()
-                .log().body()
+                .spec(responseWithBodySpec)
                 .statusCode(200)
-                .body("job", is("hard worker"));
+                .extract().as(UserInfoResponseModel.class));
+        step("Verify response", () -> {
+            assertEquals("Alex", responseModel.getName());
+            assertEquals("hard worker", responseModel.getJob());
+        });
     }
 
     @Test
     @Order(3)
-    void checkDeleteUser() {
-        given().log().uri()
-                .log().method()
+    void checkDeleteUserTest() {
+        step("Delete user request", () ->  given(requestWithoutBodySpec)
                 .when()
                 .delete("/users/" + userId)
                 .then()
-                .log().status()
-                .statusCode(204);
+                .spec(responseWithoutBodySpec)
+                .statusCode(204));
     }
 
     @Test
     @Order(4)
-    void checkGetUser() {
-        given().log().uri()
-                .log().method()
+    void checkGetUserTest() {
+        UserFullInfoModel userFullInfoModel = step("Get user request", () -> given(requestWithoutBodySpec)
                 .when()
                 .get("/users/7")
                 .then()
-                .log().status()
-                .log().body()
+                .spec(responseWithBodySpec)
                 .statusCode(200)
-                .body("data.first_name", is("Michael"));
+                .extract().as(UserFullInfoModel.class));
+        step("Verify response", () ->
+        assertEquals("Michael", userFullInfoModel.getData().getFirst_name()));
     }
 
-    @Test
+   @Test
     @Order(5)
-    void checkRegisterUser() {
-        given().log().uri()
-                .log().method()
-                .log().body()
-                .body("{\n" +
-                        "    \"email\": \"eve.holt@reqres.in\",\n" +
-                        "    \"password\": \"pistol\"\n" +
-                        "}")
-                .contentType(JSON)
+    void checkRegisterUserTest() {
+       RegisterRequestModel registerRequestModel = new RegisterRequestModel();
+       registerRequestModel.setEmail("eve.holt@reqres.in");
+       registerRequestModel.setPassword("pistol");
+       RegisterResponseModel registerResponseModel = step("Register user request", () -> given(requestWithBodySpec)
+                .body(registerRequestModel)
                 .when()
                 .post("/register")
                 .then()
-                .log().status()
-                .log().body()
+                .spec(responseWithBodySpec)
                 .statusCode(200)
-                .body("token", is("QpwL5tke4Pnpja7X4"));;
+                .extract().as(RegisterResponseModel.class));
+       step("Verify response", () ->
+       assertEquals("QpwL5tke4Pnpja7X4", registerResponseModel.getToken()));
+
+    }
+
+    @Test
+    @Order(6)
+    void checkGetListUserTest() {
+        UserListModel userListModel = step("Get list user request", () -> given(requestWithoutBodySpec)
+                .when()
+                .get("/users?page=2")
+                .then()
+                .spec(responseWithBodySpec)
+                .statusCode(200)
+                .extract().as(UserListModel.class));
+        step("Verify response", () -> {
+            assertEquals(8, userListModel.getData().get(1).getId());
+            assertEquals("Lindsay", userListModel.getData().get(1).getFirst_name());
+        });
+
     }
 }
