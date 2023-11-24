@@ -1,20 +1,21 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserFullInfoModel {
-    Support support;
+
     DataInfo data;
 
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class DataInfo {
         Integer id;
-        String email, first_name, last_name, avatar;
+        @JsonProperty("first_name")
+        String firstName;
     }
 
-    @Data
-    public static class Support {
-        String url, text;
-    }
 }

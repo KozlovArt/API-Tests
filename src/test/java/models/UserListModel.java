@@ -1,23 +1,23 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserListModel {
-    Integer page, per_page, total, total_pages;
-    Support support;
     List<DataInfo> data;
 
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class DataInfo {
         Integer id;
-        String email, first_name, last_name, avatar;
+        @JsonProperty("first_name")
+        String firstName;
+
     }
 
-    @Data
-    public static class Support {
-        String url, text;
-    }
 }
