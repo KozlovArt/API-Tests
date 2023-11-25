@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static specs.ReqresSpec.*;
 
 
-public class APITests extends TestBase {
+public class ApiTests extends TestBase {
 
     @Test
     void checkCreateUserTest() {
