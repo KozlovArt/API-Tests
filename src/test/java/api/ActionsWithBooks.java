@@ -49,10 +49,4 @@ public class ActionsWithBooks {
                 .statusCode(204);
     }
 
-    @Step("Verify delete book")
-    public void verifyDeleteBook(String isbn){
-        open("/profile");
-        $("[href*='/profile?book={isbn}']").shouldNotBe(exist);
-    }
-
 }
