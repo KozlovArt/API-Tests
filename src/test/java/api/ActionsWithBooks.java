@@ -17,9 +17,9 @@ public class ActionsWithBooks {
     public void addBook(Response authResponse, String isbn){
 
         AddBookModel addBookModel = new AddBookModel();
-        AddBookModel.CollectionInfo CollectionInfo = new AddBookModel.CollectionInfo();
-        CollectionInfo.setIsbn(isbn);
-        addBookModel.getCollectionOfIsbns().add(CollectionInfo);
+        AddBookModel.CollectionInfo collectionInfo = new AddBookModel.CollectionInfo();
+        collectionInfo.setIsbn(isbn);
+        addBookModel.getCollectionOfIsbns().add(collectionInfo);
         addBookModel.setUserId(authResponse.path("userId"));
 
         given(requestSpec)
